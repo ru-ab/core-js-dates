@@ -68,8 +68,29 @@ function getDayName(date) {
  * Date('2024-02-13T00:00:00Z') => Date('2024-02-16T00:00:00Z')
  * Date('2024-02-16T00:00:00Z') => Date('2024-02-23T00:00:00Z')
  */
-function getNextFriday(/* date */) {
-  throw new Error('Not implemented');
+function getNextFriday(date) {
+  const dayOffsets = {
+    Sunday: 5,
+    Monday: 4,
+    Tuesday: 3,
+    Wednesday: 2,
+    Thursday: 1,
+    Friday: 7,
+    Saturday: 6,
+  };
+
+  const dayOfTheWeek = date.toLocaleString('en-US', {
+    weekday: 'long',
+    timeZone: 'UTC',
+  });
+
+  return new Date(
+    Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate() + dayOffsets[dayOfTheWeek]
+    )
+  );
 }
 
 /**
