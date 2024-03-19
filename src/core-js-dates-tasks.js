@@ -278,8 +278,36 @@ function getQuarter(date) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  const convertStringToDate = (date) => {
+    const [dd, mm, yyyy] = date.split('-');
+    return new Date(Date.UTC(yyyy, mm - 1, dd));
+  };
+
+  const startPeriod = convertStringToDate(period.start);
+  const endPeriod = convertStringToDate(period.end);
+  const daysInPeriod =
+    (endPeriod.getTime() - startPeriod.getTime()) / (1000 * 3600 * 24) + 1;
+
+  const days = Array.from({ length: daysInPeriod }, (_, i) =>
+    new Date(
+      startPeriod.getFullYear(),
+      startPeriod.getMonth(),
+      startPeriod.getDate() + i + 1
+    )
+      .toLocaleDateString('ru-RU', { timeZone: 'UTC' })
+      .replaceAll('.', '-')
+  );
+  return days.filter(
+    (_, i) =>
+      i >=
+        (countWorkDays + countOffDays) *
+          Math.floor(i / (countWorkDays + countOffDays)) &&
+      i <
+        (countWorkDays + countOffDays) *
+          Math.floor(i / (countWorkDays + countOffDays)) +
+          countWorkDays
+  );
 }
 
 /**
