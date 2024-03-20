@@ -289,9 +289,11 @@ function getWorkSchedule(period, countWorkDays, countOffDays) {
 
   const days = Array.from({ length: daysInPeriod }, (_, i) =>
     new Date(
-      startPeriod.getFullYear(),
-      startPeriod.getMonth(),
-      startPeriod.getDate() + i + 1
+      Date.UTC(
+        startPeriod.getUTCFullYear(),
+        startPeriod.getUTCMonth(),
+        startPeriod.getUTCDate() + i
+      )
     )
       .toLocaleDateString('ru-RU', { timeZone: 'UTC' })
       .replaceAll('.', '-')
