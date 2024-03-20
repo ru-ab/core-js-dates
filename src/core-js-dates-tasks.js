@@ -105,7 +105,7 @@ function getNextFriday(date) {
  * 2, 2024 => 29
  */
 function getCountDaysInMonth(month, year) {
-  return new Date(Date.UTC(year, month, 0)).getDate();
+  return new Date(Date.UTC(year, month, 0)).getUTCDate();
 }
 
 /**
@@ -198,22 +198,20 @@ function getCountWeekendsInMonth(month, year) {
  * Date(2024, 1, 23) => 8
  */
 function getWeekNumberByDate(date) {
-  const months = Array.from({ length: date.getUTCMonth() }, (_, i) =>
-    new Date(date.getUTCFullYear(), i + 1, 0).getDate()
+  const dateUtc = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
   );
 
-  const daysInPreviousMonths = months.reduce(
-    (totalDaysCount, daysCount) => totalDaysCount + daysCount,
-    0
-  );
+  const firstDayOfYear = new Date(Date.UTC(dateUtc.getUTCFullYear(), 0, 1));
 
-  const dayNumber = daysInPreviousMonths + date.getDate();
-  const firstDayOfYearWeekday = new Date(
-    date.getUTCFullYear(),
-    0,
-    1
-  ).getUTCDay();
-  return Math.ceil((dayNumber + firstDayOfYearWeekday) / 7);
+  const weekDayOffset = (firstDayOfYear.getUTCDay() || 7) - 1;
+
+  const daysPassed =
+    (dateUtc.getTime() - firstDayOfYear.getTime()) / (1000 * 3600 * 24) + 1;
+
+  const weekNumber = Math.ceil((daysPassed + weekDayOffset) / 7);
+
+  return weekNumber;
 }
 
 /**
